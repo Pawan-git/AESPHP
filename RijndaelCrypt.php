@@ -3,13 +3,21 @@
 class AESCrypt {
 	
 	private $key;
-	private $iv;
+	private $iv_str = "ThisIsUrPassword"; // 16 character private key
 	private $digest = "md5";
 	private $method = "aes-128-cbc";
-
 	public function __construct($password) {
 		$this->key = substr(hash($this->digest, $password, true), 0, 32);
-		$this->iv = chr(84) . chr(104) . chr(105) . chr(115) . chr(73) . chr(115) . chr(85) . chr(114) . chr(80) . chr(97) . chr(115) . chr(115) . chr(119) . chr(111) . chr(114) . chr(100);
+		$this->iv = $this->_generateIV($this->iv_str);
+	}
+
+	private function _generateIV($str){
+		$byte = '';
+		for($i = 0; $i < mb_strlen($str, 'ASCII'); $i++)
+		{
+		   $byte .= chr(ord($str[$i]));
+		}
+		return $byte;
 	}
 
 	public function encryptText($plaintext) {
